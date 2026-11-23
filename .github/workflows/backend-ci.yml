@@ -8,6 +8,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./backend/sports-app
     steps:
       - uses: actions/checkout@v4
       - name: Set up JDK 21
@@ -18,13 +21,10 @@ jobs:
           cache: 'maven'
       - name: Checkstyle
         run: mvn -B -ntp checkstyle:check
-        working-directory: ./backend
       - name: Test (placeholder)
         run: mvn -B -ntp test
-        working-directory: ./backend
       - name: Package
         run: mvn -B -ntp package -DskipTests
-        working-directory: ./backend
       - name: Collect Git metrics
         run: |
           echo "Commits in last 7 days: $(git log --since='7 days ago' --oneline | wc -l)"
