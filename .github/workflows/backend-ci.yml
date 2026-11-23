@@ -1,0 +1,31 @@
+name: Backend CI
+on:
+  push:
+    paths: ['backend/**']
+  pull_request:
+    paths: ['backend/**']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Checkstyle
+        run: mvn -B -ntp checkstyle:check
+        working-directory: ./backend
+      - name: Test (placeholder)
+        run: mvn -B -ntp test
+        working-directory: ./backend
+      - name: Package
+        run: mvn -B -ntp package -DskipTests
+        working-directory: ./backend
+      - name: Collect Git metrics
+        run: |
+          echo "Commits in last 7 days: $(git log --since='7 days ago' --oneline | wc -l)"
+          echo "Average commit size (lines changed): $(git log --since='7 days ago' --pretty=format: --numstat | awk '{add+=$1; del+=$2} END {print (add+del)/NR}')"
